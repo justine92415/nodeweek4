@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema<IPost>(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
       select: false,
     },
     user: {

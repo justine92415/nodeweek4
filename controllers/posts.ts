@@ -1,28 +1,34 @@
 import Post from '../models/postModel';
-import User from '../models/userModel';
-// const User = require('../models/userModel');
+import '../models/userModel';
 import handleSuccess from '../service/handleSuccess';
 import handleError from '../service/handleError';
 import { IPost } from '../type';
 import { Request, Response } from 'express';
+import { FilterQuery } from 'mongoose';
 
 const posts = {
   async getPosts(req: Request, res: Response) {
-    const posts = await Post.find().populate({
-      path: 'user',
-      select: 'name photo',
-    });
-    console.log(posts)
+    const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt';
+    const q: FilterQuery<IPost> = {
+      content: { $regex: req.query.q || '', $options: 'i' },
+    };
+    const posts = await Post.find(q)
+      .populate({
+        path: 'user',
+        select: 'name photo',
+      })
+      .sort(timeSort);
     handleSuccess(res, posts);
   },
   async createPost(req: Request, res: Response) {
     try {
       const { body } = req;
-      console.log(body);
+      const random = Math.floor(Math.random() * 1000);
       if (!!body.content) {
         const newPost = await Post.create<IPost>({
-          user: body.user,
+          user: body.user || '6624c98b3825a53f4d8a5506',
           content: body.content,
+          image: body.image || `https://picsum.photos/${random}/${random}`,
         });
         handleSuccess(res, newPost);
       } else {

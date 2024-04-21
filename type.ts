@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import { Types } from 'mongoose';
 
 export interface IPost {
   content: string;
   image?: string;
   createdAt?: Date;
-  user: typeof mongoose.Schema.ObjectId;
+  user: Types.ObjectId;
   likes?: number;
 }
 
